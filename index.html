@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="RealTime Chat app , nodejs, socket.io">
+    <meta name="author" content="Juneid shaikh">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jchat</title>
+  </head>
+  <body>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,200;0,300;1,100;1,200;1,300&family=Pacifico&display=swap");
+
+      html{
+        margin-bottom: 50px;
+      }
+      body {
+        background-color: #e6e6e6;
+        margin: 0;
+        padding-bottom: 3rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+          
+      }
+
+      #form {
+        background: rgba(0, 0, 0, 0.15);
+        padding: 0.25rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        height: 3rem;
+        box-sizing: border-box;
+        backdrop-filter: blur(10px);
+      }
+      #input {
+        border: none;
+        padding: 0 1rem;
+        flex-grow: 1;
+        border-radius: 2rem;
+        margin: 0.25rem;
+      }
+      #input:focus {
+        outline: none;
+      }
+      #form > button {
+        background: #333;
+        border: none;
+        padding: 0 1rem;
+        margin: 0.25rem;
+        border-radius: 3px;
+        outline: none;
+        color: #fff;
+      }
+
+      #messages {
+        width: auto;
+        overflow-wrap: normal;
+        list-style: none;
+        border-radius: 100px;
+        margin: 6px;
+        padding: 0;
+      }
+      #messages > li {
+        padding: 0.5rem 1rem;
+        margin: 10px;
+        list-style: none;
+        border-radius: 10px;
+        background-color: #ddd;
+        font-size: 18px;
+      }
+      #join {
+        text-align: center;
+        font-size: 20px;
+        color: #00d200;
+        font-weight: 900;
+      }
+      /* width */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      /* Track */
+      ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px white;
+        border-radius: 10px;
+      }
+
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #323232c2;
+        border-radius: 10px;
+      }
+      .userjoin {
+        text-align: center;
+        color: #00ac00;
+      }
+      .incoming {
+        border-radius: 12px;
+        width: 340px;
+        padding-left: 24px;
+        margin: 18px;
+        float: left;
+        clear: both;
+        overflow-wrap: break-word;
+        background: #e9eafd;
+        color: #000;
+        box-shadow: #fff -8px -8px 18px, #000000a4 8px 8px 18px;
+      }
+      .outgoing {
+        border-radius: 12px;
+        width: 340px;
+        padding-left: 24px;
+        margin: 18px;
+        background: #e9eafd;
+        color: #000;
+        float: right;
+        clear: right;
+        overflow-wrap: break-word;
+        box-shadow: #fff -8px -8px 18px, #000000a4 8px 8px 18px;
+      }
+      .header {
+        width: auto;
+        padding: 0px 20px 0px 20px;
+        margin-bottom: 24px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+          rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+      }
+      .header span {
+        font-size: 34px;
+        margin-left: 4px;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-family: "Pacifico", cursive;
+      }
+      .header p {
+        font-size: 20px;
+        margin: 4px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      @media only screen and (max-width: 425px) {
+        .incoming {
+        width: 255px;
+        margin-right: 116px;
+
+      }
+      .outgoing {
+        width: 255px;
+        margin-left: 116px;
+      }
+}
+      @media only screen and (min-width: 425px) {
+        .incoming {
+        width: 255px;
+        margin-right: 100%;
+
+      }
+      .outgoing {
+        width: 255px;
+        margin-left: 100%;
+      }
+}
+#welcome-msg{
+  color: #000;
+
+}
+    </style>
+
+    <div class="header">
+      <span>Jchat</span>
+      <p>Chat App</p>
+    </div>
+    <div id="join"></div>
+    <div id="user-join"></div>
+    <div id="messages">
+
+    </div>
+    <form id="form" action="">
+      <input
+        id="input"
+        autocomplete="off"
+        placeholder="Type message here ..."
+      /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      let name;
+
+      do {
+        name = prompt("Please Enter Your Name : ");
+      } while (!name);
+
+      document.getElementById("join").innerHTML = `<h3 id="welcome-msg">Welcome to Jchat</h3>You Joined`;
+      
+      socket.emit("new-user", name);
+
+      var messages = document.getElementById("messages");
+      var form = document.getElementById("form");
+      var input = document.getElementById("input");
+      var music = document.getElementById('audio');
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (input.value) {
+          // socket.emit('chat-message', input.value);
+          // input.value = '';
+          sendMessage(input.value);
+        }
+      });
+
+      function sendMessage(message) {
+        let msg = {
+          user: name,
+          message: message.trim(),
+        };
+        //Append
+        appendMessage(msg, "outgoing");
+        input.value = "";
+
+        //send to server
+        socket.emit("chat-message", msg);
+      }
+
+      function appendMessage(msg, type) {
+        let mainDiv = document.createElement("div");
+        let className = type;
+        mainDiv.classList.add(className, "chat-message");
+
+        let markup = `
+    <h4 style="text-transform: capitalize;">${msg.user}</h4>
+        <p style="text-transform: capitalize;">${msg.message}</p>
+        `;
+        window.scrollTo(0, document.body.scrollHeight);
+        mainDiv.innerHTML = markup;
+        messages.appendChild(mainDiv);
+      }
+      socket.on("chat-message", (msg) => {
+        appendMessage(msg, "incoming");
+      });
+
+      socket.on("user-connect", (name) => {
+        let userjoin = document.createElement("div");
+        let usersjoin = `
+    <h4 class="userjoin">${name} Connected</h4>`;
+        userjoin.innerHTML = usersjoin;
+        messages.append(userjoin);
+      });
+
+      socket.on("user-disconnect", (name) => {
+        let userjoin = document.createElement("div");
+        let usersjoin = `
+    <h4 style="color:red; text-align: center;">${name} Disconnected<br></h4>`;
+        userjoin.innerHTML = usersjoin;
+        messages.appendChild(userjoin);
+      });
+    </script>
+  </body>
+</html>
