@@ -2,26 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="keywords" content="RealTime Chat app , nodejs, socket.io">
-    <meta name="author" content="Juneid shaikh">
+    <meta name="keywords" content="RealTime Chat app , nodejs, socket.io" />
+    <meta name="author" content="Juneid shaikh" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jchat</title>
   </head>
+
   <body>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,200;0,300;1,100;1,200;1,300&family=Pacifico&display=swap");
 
-      html{
+      html {
         margin-bottom: 50px;
       }
+
       body {
         background-color: #e6e6e6;
         margin: 0;
         padding-bottom: 3rem;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
-          
       }
 
       #form {
@@ -36,6 +37,7 @@
         box-sizing: border-box;
         backdrop-filter: blur(10px);
       }
+
       #input {
         border: none;
         padding: 0 1rem;
@@ -43,9 +45,11 @@
         border-radius: 2rem;
         margin: 0.25rem;
       }
+
       #input:focus {
         outline: none;
       }
+
       #form > button {
         background: #333;
         border: none;
@@ -64,6 +68,7 @@
         margin: 6px;
         padding: 0;
       }
+
       #messages > li {
         padding: 0.5rem 1rem;
         margin: 10px;
@@ -72,12 +77,14 @@
         background-color: #ddd;
         font-size: 18px;
       }
+
       #join {
         text-align: center;
         font-size: 20px;
         color: #00d200;
         font-weight: 900;
       }
+
       /* width */
       ::-webkit-scrollbar {
         width: 8px;
@@ -94,10 +101,12 @@
         background: #323232c2;
         border-radius: 10px;
       }
+
       .userjoin {
         text-align: center;
         color: #00ac00;
       }
+
       .incoming {
         border-radius: 12px;
         width: 340px;
@@ -108,8 +117,9 @@
         overflow-wrap: break-word;
         background: #e9eafd;
         color: #000;
-        box-shadow: #fff -8px -8px 18px, #000000a4 8px 8px 18px;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
       }
+
       .outgoing {
         border-radius: 12px;
         width: 340px;
@@ -120,8 +130,9 @@
         float: right;
         clear: right;
         overflow-wrap: break-word;
-        box-shadow: #fff -8px -8px 18px, #000000a4 8px 8px 18px;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
       }
+
       .header {
         width: auto;
         padding: 0px 20px 0px 20px;
@@ -134,43 +145,47 @@
         box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
           rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
       }
+
       .header span {
         font-size: 34px;
         margin-left: 4px;
         font-family: "IBM Plex Sans", sans-serif;
         font-family: "Pacifico", cursive;
       }
+
       .header p {
         font-size: 20px;
         margin: 4px;
         font-family: Arial, Helvetica, sans-serif;
       }
+
       @media only screen and (max-width: 425px) {
         .incoming {
-        width: 255px;
-        margin-right: 116px;
+          width: 255px;
+          margin-right: 116px;
+        }
 
+        .outgoing {
+          width: 255px;
+          margin-left: 116px;
+        }
       }
-      .outgoing {
-        width: 255px;
-        margin-left: 116px;
-      }
-}
+
       @media only screen and (min-width: 425px) {
         .incoming {
-        width: 255px;
-        margin-right: 100%;
+          width: 255px;
+          margin-right: 100%;
+        }
 
+        .outgoing {
+          width: 255px;
+          margin-left: 100%;
+        }
       }
-      .outgoing {
-        width: 255px;
-        margin-left: 100%;
-      }
-}
-#welcome-msg{
-  color: #000;
 
-}
+      #welcome-msg {
+        color: #000;
+      }
     </style>
 
     <div class="header">
@@ -179,9 +194,7 @@
     </div>
     <div id="join"></div>
     <div id="user-join"></div>
-    <div id="messages">
-
-    </div>
+    <div id="messages"></div>
     <form id="form" action="">
       <input
         id="input"
@@ -199,14 +212,16 @@
         name = prompt("Please Enter Your Name : ");
       } while (!name);
 
-      document.getElementById("join").innerHTML = `<h3 id="welcome-msg">Welcome to Jchat</h3>You Joined`;
-      
+      document.getElementById(
+        "join"
+      ).innerHTML = `<h3 id="welcome-msg">Welcome to Jchat</h3>You Joined`;
+
       socket.emit("new-user", name);
 
       var messages = document.getElementById("messages");
       var form = document.getElementById("form");
       var input = document.getElementById("input");
-      var music = document.getElementById('audio');
+      var music = document.getElementById("audio");
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -236,13 +251,27 @@
         mainDiv.classList.add(className, "chat-message");
 
         let markup = `
-    <h4 style="text-transform: capitalize;">${msg.user}</h4>
-        <p style="text-transform: capitalize;">${msg.message}</p>
+    <h4 style="font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d2d2d;
+        text-transform: capitalize;
+">${msg.user}</h4>
+        <p style="font-size: 1rem;
+            color: #333;
+            text-transform: capitalize;
+">${msg.message}</p>
         `;
-        window.scrollTo(0, document.body.scrollHeight);
         mainDiv.innerHTML = markup;
         messages.appendChild(mainDiv);
+        // Move scrolling after adding the message
+        setTimeout(() => {
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+          });
+        }, 0);
       }
+
       socket.on("chat-message", (msg) => {
         appendMessage(msg, "incoming");
       });
